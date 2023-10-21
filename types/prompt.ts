@@ -1,10 +1,10 @@
-import { OpenAIModel } from './openai';
+import { BedrockModel } from './bedrock';
 
 export interface Prompt {
   id: string;
   name: string;
   description: string;
   content: string;
-  model: OpenAIModel;
+  model: BedrockModel;
   folderId: string | null;
 }

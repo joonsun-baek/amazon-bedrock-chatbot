@@ -1,5 +1,11 @@
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
+import { BedrockModel } from '@/types/bedrock';
+import {
+  BedrockRuntime,
+  BedrockRuntimeClient
+} from '@aws-sdk/client-bedrock-runtime';
+
 
 import { AZURE_DEPLOYMENT_ID, OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION, OPENAI_ORGANIZATION } from '../app/const';
 
@@ -8,6 +14,7 @@ import {
   ReconnectInterval,
   createParser,
 } from 'eventsource-parser';
+import {InvokeModelCommandInput} from "@aws-sdk/client-bedrock-runtime/dist-types/commands/InvokeModelCommand";
 
 export class OpenAIError extends Error {
   type: string;
@@ -114,4 +121,61 @@ export const OpenAIStream = async (
   });
 
   return stream;
+};
+
+
+export class BedrockError extends Error {
+  type: string;
+  param: string;
+  code: string;
+
+  constructor(message: string, type: string, param: string, code: string) {
+    super(message);
+    this.name = 'BedrockError';
+    this.type = type;
+    this.param = param;
+    this.code = code;
+  }
+}
+
+export const BedrockStream = async (
+    model: BedrockModel,
+    systemPrompt: string,
+    temperature: number,
+    key: string,
+    messages: Message[],
+) => {
+  const encoder = new TextEncoder();
+
+  console.log(`process.env.AWS_ACCESS_KEY_ID : ${process.env.AWS_ACCESS_KEY_ID}`)
+  console.log(`process.env.AWS_SECRET_ACCESS_KEY : ${process.env.AWS_SECRET_ACCESS_KEY}`)
+
+  // const bedrockRuntime = new BedrockRuntime({region: 'us-east-1'})
+  //
+  // const payload = {
+  //   prompt: "\n\nHuman:너의 이름은 뭐야?뭐하는앤지 설명해줘 \n\nAssistant:",
+  //   max_tokens_to_sample: 300,
+  //   temperature: 0.1,
+  //   top_p: 0.9,
+  //   stop_sequences: ["\n\nHuman:"]
+  // }
+  //
+  // const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+  //
+  // const request: InvokeModelCommandInput = {
+  //   body: blob,
+  //   contentType: "application/json",
+  //   accept: "application/json",
+  //   modelId: model.id,
+  // };
+  //
+  // bedrockRuntime.invokeModel(request);
+
+  return new ReadableStream({
+    start(controller) {
+      const helloWorldQueue = encoder.encode("hello world");
+      controller.enqueue(helloWorldQueue);
+      controller.close();
+    },
+  });
 };

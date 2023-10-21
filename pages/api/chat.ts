@@ -1,5 +1,5 @@
 import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
-import { OpenAIError, OpenAIStream } from '@/utils/server';
+import { BedrockError, BedrockStream } from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
 
@@ -52,12 +52,12 @@ const handler = async (req: Request): Promise<Response> => {
 
     encoding.free();
 
-    const stream = await OpenAIStream(model, promptToSend, temperatureToUse, key, messagesToSend);
+    const stream = await BedrockStream(model, promptToSend, temperatureToUse, key, messagesToSend);
 
     return new Response(stream);
   } catch (error) {
     console.error(error);
-    if (error instanceof OpenAIError) {
+    if (error instanceof BedrockError) {
       return new Response('Error', { status: 500, statusText: error.message });
     } else {
       return new Response('Error', { status: 500 });

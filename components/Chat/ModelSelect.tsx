@@ -3,7 +3,7 @@ import { useContext } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
-import { OpenAIModel } from '@/types/openai';
+import { BedrockModel } from '@/types/bedrock';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -22,7 +22,7 @@ export const ModelSelect = () => {
         key: 'model',
         value: models.find(
           (model) => model.id === e.target.value,
-        ) as OpenAIModel,
+        ) as BedrockModel,
       });
   };
 
