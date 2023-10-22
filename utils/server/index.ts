@@ -3,7 +3,7 @@ import { OpenAIModel } from '@/types/openai';
 import { BedrockModel } from '@/types/bedrock';
 import {
   BedrockRuntime,
-  BedrockRuntimeClient
+  BedrockRuntimeClient, InvokeModelCommand
 } from '@aws-sdk/client-bedrock-runtime';
 
 
@@ -145,31 +145,15 @@ export const BedrockStream = async (
     key: string,
     messages: Message[],
 ) => {
+  console.log("000")
   const encoder = new TextEncoder();
-
+  console.log("111")
   console.log(`process.env.AWS_ACCESS_KEY_ID : ${process.env.AWS_ACCESS_KEY_ID}`)
   console.log(`process.env.AWS_SECRET_ACCESS_KEY : ${process.env.AWS_SECRET_ACCESS_KEY}`)
+  console.log("222")
 
-  // const bedrockRuntime = new BedrockRuntime({region: 'us-east-1'})
-  //
-  // const payload = {
-  //   prompt: "\n\nHuman:너의 이름은 뭐야?뭐하는앤지 설명해줘 \n\nAssistant:",
-  //   max_tokens_to_sample: 300,
-  //   temperature: 0.1,
-  //   top_p: 0.9,
-  //   stop_sequences: ["\n\nHuman:"]
-  // }
-  //
-  // const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-  //
-  // const request: InvokeModelCommandInput = {
-  //   body: blob,
-  //   contentType: "application/json",
-  //   accept: "application/json",
-  //   modelId: model.id,
-  // };
-  //
-  // bedrockRuntime.invokeModel(request);
+  const response = request()
+  // console.log(await response)
 
   return new ReadableStream({
     start(controller) {
@@ -179,3 +163,38 @@ export const BedrockStream = async (
     },
   });
 };
+
+export async function request(): Promise<any> {
+  console.log("aaa")
+  const bedrockRuntime = new BedrockRuntimeClient({
+    region: "us-east-1",
+    apiVersion: '2023-09-30',
+    credentials:{
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? ''
+    }
+  })
+
+  console.log("bbb")
+  const payload = {
+    prompt: "\n\nHuman:너의 이름은 뭐야?뭐하는앤지 설명해줘 \n\nAssistant:",
+    max_tokens_to_sample: 300,
+    temperature: 0.1,
+    top_p: 0.9,
+    stop_sequences: ["\n\nHuman:"]
+  }
+  const input = {
+    contentType: 'application/json',
+    accept: '*/*',
+    modelId: 'stability.stable-diffusion-xl-v0',
+    body: `{
+        "prompt": "\n\nHuman:너의 이름은 뭐야?뭐하는앤지 설명해줘 \n\nAssistant:"
+    }`
+  };
+
+  console.log("ccc")
+  const command = new InvokeModelCommand(input);
+
+  console.log("ddd")
+  return await bedrockRuntime.send(command);
+}
