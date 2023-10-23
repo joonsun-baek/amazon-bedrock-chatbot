@@ -10,7 +10,6 @@ import {
   createParser,
 } from 'eventsource-parser';
 import {AwsClient, AwsV4Signer} from "aws4fetch";
-import {headers} from "next/headers";
 
 export class OpenAIError extends Error {
   type: string;
@@ -154,7 +153,7 @@ export const BedrockStream = async (
 
   let payload = {
     prompt: payloadMessage,
-    max_tokens_to_sample: 300,
+    max_tokens_to_sample: 10000,
     temperature: 0.1,
     top_p: 0.9,
     stop_sequences: ["\n\nHuman:"]
@@ -182,15 +181,30 @@ export const BedrockStream = async (
   });
 
   const responseJson = await response.json()
+  console.log(`responseJson.completion: ${responseJson.completion}`)
+
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
   return new ReadableStream({
-    start(controller) {
-      const helloWorldQueue = encoder.encode(responseJson.completion);
-      controller.enqueue(helloWorldQueue);
-      controller.close();
-    },
+    async start(controller) {
+      let index = 0;
+      const chunkSize = 30;
+
+      const onParse = () => {
+        if (index < responseJson.completion.length) {
+          const chunk = responseJson.completion.substring(index, index + chunkSize);
+          const encoded = encoder.encode(chunk)
+          controller.enqueue(encoded);
+          index += chunkSize;
+          setTimeout(onParse, 50);
+        } else {
+          controller.close();
+        }
+      };
+
+      onParse();
+    }
   });
 };
 
