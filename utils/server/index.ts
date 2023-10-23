@@ -149,7 +149,7 @@ export const BedrockStream = async (
     })
     .join("\n")
   const payloadMessage = `${previousMessages}\nAssistant:`
-  console.log(`payloadMessage : ${payloadMessage}`)
+  // console.log(`payloadMessage : ${payloadMessage}`)
 
   let payload = {
     prompt: payloadMessage,
@@ -181,7 +181,7 @@ export const BedrockStream = async (
   });
 
   const responseJson = await response.json()
-  console.log(`responseJson.completion: ${responseJson.completion}`)
+  // console.log(`responseJson.completion: ${responseJson.completion}`)
 
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
