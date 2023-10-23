@@ -1,11 +1,6 @@
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { BedrockModel } from '@/types/bedrock';
-import {
-  BedrockRuntime,
-  BedrockRuntimeClient, InvokeModelCommand
-} from '@aws-sdk/client-bedrock-runtime';
-
 
 import { AZURE_DEPLOYMENT_ID, OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION, OPENAI_ORGANIZATION } from '../app/const';
 
@@ -14,7 +9,8 @@ import {
   ReconnectInterval,
   createParser,
 } from 'eventsource-parser';
-import {InvokeModelCommandInput} from "@aws-sdk/client-bedrock-runtime/dist-types/commands/InvokeModelCommand";
+import {AwsClient, AwsV4Signer} from "aws4fetch";
+import {headers} from "next/headers";
 
 export class OpenAIError extends Error {
   type: string;
@@ -145,56 +141,67 @@ export const BedrockStream = async (
     key: string,
     messages: Message[],
 ) => {
-  console.log("000")
-  const encoder = new TextEncoder();
-  console.log("111")
-  console.log(`process.env.AWS_ACCESS_KEY_ID : ${process.env.AWS_ACCESS_KEY_ID}`)
-  console.log(`process.env.AWS_SECRET_ACCESS_KEY : ${process.env.AWS_SECRET_ACCESS_KEY}`)
-  console.log("222")
+  const AWS_ACCESS_KEY_ID = `${process.env.AWS_ACCESS_KEY_ID}`
+  const AWS_SECRET_ACCESS_KEY = `${process.env.AWS_SECRET_ACCESS_KEY}`
 
-  const response = request()
-  // console.log(await response)
+  const previousMessages = messages
+    .map(message => {
+      return `${message.role}:${message.content}`
+    })
+    .join("\n")
+  const payloadMessage = `${previousMessages}\nAssistant:`
+  console.log(`payloadMessage : ${payloadMessage}`)
+
+  let payload = {
+    prompt: payloadMessage,
+    max_tokens_to_sample: 300,
+    temperature: 0.1,
+    top_p: 0.9,
+    stop_sequences: ["\n\nHuman:"]
+  }
+
+  let url = `https://bedrock-runtime.us-east-1.amazonaws.com/model/${model.id}/invoke`;
+  const request = sign({
+    url: url,
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    region: 'us-east-1',
+    service: 'bedrock',
+    body: JSON.stringify(payload),
+    headers: {
+      'content-type': 'application/json',
+      'accept': '*/*',
+    }
+  })
+
+  const requestObj = await request
+  const response = await fetch(requestObj.url, {
+    headers: requestObj.headers,
+    method: requestObj.method,
+    body: requestObj.body,
+  });
+
+  const responseJson = await response.json()
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
 
   return new ReadableStream({
     start(controller) {
-      const helloWorldQueue = encoder.encode("hello world");
+      const helloWorldQueue = encoder.encode(responseJson.completion);
       controller.enqueue(helloWorldQueue);
       controller.close();
     },
   });
 };
 
-export async function request(): Promise<any> {
-  console.log("aaa")
-  const bedrockRuntime = new BedrockRuntimeClient({
-    region: "us-east-1",
-    apiVersion: '2023-09-30',
-    credentials:{
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? '',
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? ''
-    }
-  })
 
-  console.log("bbb")
-  const payload = {
-    prompt: "\n\nHuman:너의 이름은 뭐야?뭐하는앤지 설명해줘 \n\nAssistant:",
-    max_tokens_to_sample: 300,
-    temperature: 0.1,
-    top_p: 0.9,
-    stop_sequences: ["\n\nHuman:"]
+async function sign(opts: any): Promise<any> {
+  const signer = new AwsV4Signer(opts)
+  const { method, url, headers, body } = await signer.sign()
+  return {
+    method: method,
+    url: url,
+    headers: headers,
+    body: body
   }
-  const input = {
-    contentType: 'application/json',
-    accept: '*/*',
-    modelId: 'stability.stable-diffusion-xl-v0',
-    body: `{
-        "prompt": "\n\nHuman:너의 이름은 뭐야?뭐하는앤지 설명해줘 \n\nAssistant:"
-    }`
-  };
-
-  console.log("ccc")
-  const command = new InvokeModelCommand(input);
-
-  console.log("ddd")
-  return await bedrockRuntime.send(command);
 }
