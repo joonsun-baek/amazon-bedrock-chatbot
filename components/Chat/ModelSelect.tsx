@@ -53,12 +53,12 @@ export const ModelSelect = () => {
       </div>
       <div className="w-full mt-3 text-left text-neutral-700 dark:text-neutral-400 flex items-center">
         <a
-          href="https://platform.openai.com/account/usage"
+          href="https://aws.amazon.com/ko/bedrock/"
           target="_blank"
           className="flex items-center"
         >
           <IconExternalLink size={18} className={'inline mr-1'} />
-          {t('View Account Usage')}
+          {t('View Amazon Bedrock Guide')}
         </a>
       </div>
     </div>
