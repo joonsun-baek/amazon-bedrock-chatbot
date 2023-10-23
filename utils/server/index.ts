@@ -154,8 +154,8 @@ export const BedrockStream = async (
   let payload = {
     prompt: payloadMessage,
     max_tokens_to_sample: 10000,
-    temperature: 1.0,
-    top_p: 0.9,
+    temperature: 0.9,
+    top_p: 0.8,
     stop_sequences: ["\n\nHuman:"]
   }
 
