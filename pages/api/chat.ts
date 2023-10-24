@@ -24,19 +24,18 @@ const handler = async (req: Request): Promise<Response> => {
       tiktokenModel.pat_str,
     );
 
-    let promptToSend = prompt;
-    if (!promptToSend) {
-      promptToSend = DEFAULT_SYSTEM_PROMPT;
-    }
+    // let promptToSend = prompt;
+    // if (!promptToSend) {
+    //   promptToSend = DEFAULT_SYSTEM_PROMPT;
+    // }
+    //
+    // let temperatureToUse = temperature;
+    // if (temperatureToUse == null) {
+    //   temperatureToUse = DEFAULT_TEMPERATURE;
+    // }
 
-    let temperatureToUse = temperature;
-    if (temperatureToUse == null) {
-      temperatureToUse = DEFAULT_TEMPERATURE;
-    }
-
-    const prompt_tokens = encoding.encode(promptToSend);
-
-    let tokenCount = prompt_tokens.length;
+    // const prompt_tokens = encoding.encode(promptToSend);
+    let tokenCount = 0;
     let messagesToSend: Message[] = [];
 
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -52,7 +51,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     encoding.free();
 
-    const stream = await BedrockStream(model, promptToSend, temperatureToUse, key, messagesToSend);
+    const stream = await BedrockStream(model, messagesToSend);
 
     return new Response(stream);
   } catch (error) {

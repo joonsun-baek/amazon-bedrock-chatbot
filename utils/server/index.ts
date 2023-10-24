@@ -135,9 +135,6 @@ export class BedrockError extends Error {
 
 export const BedrockStream = async (
     model: BedrockModel,
-    systemPrompt: string,
-    temperature: number,
-    key: string,
     messages: Message[],
 ) => {
   const AWS_ACCESS_KEY_ID = `${process.env.AWS_ACCESS_KEY_ID}`
