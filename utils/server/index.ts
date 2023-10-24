@@ -155,7 +155,7 @@ export const BedrockStream = async (
     max_tokens_to_sample: 10000,
     temperature: 0.9,
     top_p: 0.8,
-    stop_sequences: ["\n\nHuman:"]
+    stop_sequences: ["Human:"]
   }
 
   let url = `https://bedrock-runtime.us-east-1.amazonaws.com/model/${model.id}/invoke`;
