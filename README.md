@@ -4,10 +4,10 @@
 
 Amazon Bedrock Chatbot is an intuitive chat UI tailored for Amazon's AI models. This project was initiated from [Chatbot UI's open-source](https://github.com/mckaywrigley/chatbot-ui) codebase.
 
-It is built on top of Chatbot UI and retains the same configuration and usage. The key things are:
+It is built on top of Chatbot UI and retains the same configuration and usage, Key things of this project are:
 
 - Service name changed to Amazon Bedrock Chatbot
-- Amazon Bedrock Chatbot supports Claude v1, Claude v2, and Claude instant models.
+- Supports Amazon Bedrock Models (Claude v1, Claude v2, and Claude instant).
 - Licensed under MIT, same as Chatbot UI
 
 
