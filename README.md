@@ -1,53 +1,32 @@
-# Chatbot UI
-
-## News
-
-Chatbot UI 2.0 is out as an updated, hosted product!
-
-Check out [Takeoff Chat](https://www.takeoffchat.com/).
-
-Open source version coming soon!
+# Amazon Bedrock Chatbot
 
 ## About
 
-Chatbot UI is an open source chat UI for AI models.
+Amazon Bedrock Chatbot is an intuitive chat UI tailored for Amazon's AI models. This project was initiated from [Chatbot UI's open-source](https://github.com/mckaywrigley/chatbot-ui) codebase.
 
-See a [demo](https://twitter.com/mckaywrigley/status/1640380021423603713?s=46&t=AowqkodyK6B4JccSOxSPew).
+It is built on top of Chatbot UI and retains the same configuration and usage. The key things are:
 
-![Chatbot UI](./public/screenshots/screenshot-0402023.jpg)
+- Service name changed to Amazon Bedrock Chatbot
+- Amazon Bedrock Chatbot supports Claude v1, Claude v2, and Claude instant models.
+- Licensed under MIT, same as Chatbot UI
+
 
 ## Updates
 
-Chatbot UI will be updated over time.
+- Forked and initial version deployed from Chatbot UI
+- Modified to use AWS Access Key and Secret Key based structure
+- Supports Claude v1, v2, and instant models from Bedrock
 
-Expect frequent improvements.
-
-**Next up:**
-
-- [ ] Sharing
-- [ ] "Bots"
 
 ## Deploy
-
-**Vercel**
-
-Host your own live version of Chatbot UI with Vercel.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmckaywrigley%2Fchatbot-ui)
 
 **Docker**
 
 Build locally:
 
 ```shell
-docker build -t chatgpt-ui .
-docker run -e OPENAI_API_KEY=xxxxxxxx -p 3000:3000 chatgpt-ui
-```
-
-Pull from ghcr:
-
-```
-docker run -e OPENAI_API_KEY=xxxxxxxx -p 3000:3000 ghcr.io/mckaywrigley/chatbot-ui:main
+docker build -t amazon-bedrock-chatgpt .
+docker run -e AWS_ACCESS_KEY_ID=xxxxxxxx -e AWS_SECRET_ACCESS_KEY=xxxxxxxx -p 3000:3000 amazon-bedrock-chatgpt
 ```
 
 ## Running Locally
@@ -55,7 +34,7 @@ docker run -e OPENAI_API_KEY=xxxxxxxx -p 3000:3000 ghcr.io/mckaywrigley/chatbot-
 **1. Clone Repo**
 
 ```bash
-git clone https://github.com/mckaywrigley/chatbot-ui.git
+git clone https://github.com/joonsun-baek/amazon-bedrock-chatbot.git
 ```
 
 **2. Install Dependencies**
@@ -64,17 +43,14 @@ git clone https://github.com/mckaywrigley/chatbot-ui.git
 npm i
 ```
 
-**3. Provide OpenAI API Key**
+**3. Provide AWSAccessKeyId, AWSSecretAccessKey**
 
-Create a .env.local file in the root of the repo with your OpenAI API Key:
+Create a .env.local file in the root of the repo with your AWS Keys:
 
 ```bash
-OPENAI_API_KEY=YOUR_KEY
+AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_ACCESS_KEY
 ```
-
-> You can set `OPENAI_API_HOST` where access to the official OpenAI host is restricted or unavailable, allowing users to configure an alternative host for their specific needs.
-
-> Additionally, if you have multiple OpenAI Organizations, you can set `OPENAI_ORGANIZATION` to specify one.
 
 **4. Run App**
 
@@ -90,26 +66,15 @@ You should be able to start chatting.
 
 When deploying the application, the following environment variables can be set:
 
-| Environment Variable              | Default value                  | Description                                                                                                                               |
-| --------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| OPENAI_API_KEY                    |                                | The default API key used for authentication with OpenAI                                                                                   |
-| OPENAI_API_HOST                   | `https://api.openai.com`       | The base url, for Azure use `https://<endpoint>.openai.azure.com`                                                                         |
-| OPENAI_API_TYPE                   | `openai`                       | The API type, options are `openai` or `azure`                                                                                             |
-| OPENAI_API_VERSION                | `2023-03-15-preview`           | Only applicable for Azure OpenAI                                                                                                          |
-| AZURE_DEPLOYMENT_ID               |                                | Needed when Azure OpenAI, Ref [Azure OpenAI API](https://learn.microsoft.com/zh-cn/azure/cognitive-services/openai/reference#completions) |
-| OPENAI_ORGANIZATION               |                                | Your OpenAI organization ID                                                                                                               |
-| DEFAULT_MODEL                     | `gpt-3.5-turbo`                | The default model to use on new conversations, for Azure use `gpt-35-turbo`                                                               |
-| NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT | [see here](utils/app/const.ts) | The default system prompt to use on new conversations                                                                                     |
-| NEXT_PUBLIC_DEFAULT_TEMPERATURE   | 1                              | The default temperature to use on new conversations                                                                                       |
-| GOOGLE_API_KEY                    |                                | See [Custom Search JSON API documentation][GCSE]                                                                                          |
-| GOOGLE_CSE_ID                     |                                | See [Custom Search JSON API documentation][GCSE]                                                                                          |
+| Environment Variable              | Default value                  | Description                                           |
+| --------------------------------- |--------------------------------|-------------------------------------------------------|
+| AWS_ACCESS_KEY_ID                 |                                | AWS Access Key ID used for Amazon Bedrock API         |
+| AWS_SECRET_ACCESS_KEY             |                                | AWS Secret Access Key used for Amazon Bedrock API     |
+| DEFAULT_MODEL                     | `anthropic.claude-instant-v1`  | The default model to use on new conversations.        |
 
-If you do not provide an OpenAI API key with `OPENAI_API_KEY`, users will have to provide their own key.
-
-If you don't have an OpenAI API key, you can get one [here](https://platform.openai.com/account/api-keys).
 
 ## Contact
 
-If you have any questions, feel free to reach out to Mckay on [Twitter](https://twitter.com/mckaywrigley).
+Any feedback, even small comments, are welcome. If you have any questions, please feel free to reach out to me anytime.
 
-[GCSE]: https://developers.google.com/custom-search/v1/overview
+Amazon Bedrock Chatbot is licensed under the MIT license, same as Chatbot UI. See LICENSE file for details.
