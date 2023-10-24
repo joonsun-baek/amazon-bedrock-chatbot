@@ -142,6 +142,8 @@ export const BedrockStream = async (
 ) => {
   const AWS_ACCESS_KEY_ID = `${process.env.AWS_ACCESS_KEY_ID}`
   const AWS_SECRET_ACCESS_KEY = `${process.env.AWS_SECRET_ACCESS_KEY}`
+  console.log(`AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}`)
+  console.log(`AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}`)
 
   const previousMessages = messages
     .map(message => {
@@ -149,7 +151,7 @@ export const BedrockStream = async (
     })
     .join("\n")
   const payloadMessage = `${previousMessages}\nAssistant:`
-  // console.log(`payloadMessage : ${payloadMessage}`)
+  console.log(`payloadMessage : ${payloadMessage}`)
 
   let payload = {
     prompt: payloadMessage,
