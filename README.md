@@ -11,6 +11,11 @@ It is built on top of Chatbot UI and retains the same configuration and usage, K
 - Licensed under MIT, same as Chatbot UI
 
 
+## Examples
+![img](docs/sample_1.png)
+![img](docs/sample_2.png)
+
+
 ## Updates
 
 - Forked and initial version deployed from Chatbot UI
